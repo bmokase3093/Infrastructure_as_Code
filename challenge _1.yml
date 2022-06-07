@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Create EC2 instance and Security Group
+  In the Exiting VPC
+Resources:
+  myWebAccessSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow inbound access on tcp port 80 and allow unrestricted outbound access
+      GroupName: sgInboundAccess
+  myWebServerInstance:
+    Type: AWS::EC::Instance
+    Properties:
