@@ -1,9 +1,9 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: 2010-09-09
 Description: >
   Create EC2 instance and Security Group
   In the Exiting VPC
 Resources:
-  mySecurityGroup:
+  mySecurityGroup3093:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable inbound on tcp port 80
@@ -18,20 +18,17 @@ Resources:
           FromPort: -1
           ToPort: -1
           CidrIp: 0.0.0.0/0
-      Tags:
-        - Key: Name
-          Value: My Security Group
-  myEC2Instance:
+  myEC2Instance3093:
     Type: AWS::EC2::Instance
     Properties:
       InstanceType: t3.micro
-      ImageId: "ami-0ca285d4c2cda3300"
+      ImageId: ami-0ca285d4c2cda3300
       NetworkInterfaces:
         - AssociatePublicIpAddress: true
-          DeviceIndex: "0"
+          DeviceIndex: 0
           GroupSet:
-            - Ref: mySecurityGroup
-              SubnetId: subnet-001db6d37bcd68875
+            - Ref: mySecurityGroup3093
+          SubnetId: subnet-0a60ffda0cb371c50
       UserData:
         Fn::Base64: !Sub |
           #!bin/bash
