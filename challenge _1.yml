@@ -1,13 +1,48 @@
-AWSTemplateFormatVersion: "2010-09-09"
+AWSTemplateFormatVersion: 2010-09-09
 Description: >
   Create EC2 instance and Security Group
-  In the Exiting VPC
+  In the Exiting VPC by using parameters
+Parameters:
+  MyVPC:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC to launch my Resources
+  PublicSubnet:
+    Type: AWS::EC2::Subnet::Id
+    Description: Subnet where my resources will reside
+  ImageToUse:
+    Type: String
+    Description: The AMI to Use
 Resources:
-  myWebAccessSecurityGroup:
+  mySecurityGroup3093:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Allow inbound access on tcp port 80 and allow unrestricted outbound access
-      GroupName: sgInboundAccess
-  myWebServerInstance:
-    Type: AWS::EC::Instance
+      GroupDescription: Enable inbound on tcp port 80
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+  myEC2Instance3093:
+    Type: AWS::EC2::Instance
     Properties:
+      InstanceType: t3.micro
+      ImageId: !Ref ImageToUse
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          GroupSet:
+            - Ref: mySecurityGroup3093
+          SubnetId: !Ref PublicSubnet
+      UserData:
+        Fn::Base64: !Sub |
+          #!bin/bash
+          sudo yum update -y
+          sudo yum install -y httpd
+          sudo systemctl start httpd
+          sudo systemctl enable httpd
