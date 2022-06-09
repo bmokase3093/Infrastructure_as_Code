@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create the VPC and Internet Gateway
+Parameters:
+    EnvironmentName:
+        Description: An Enviromen name that will be prefix to Resources
+        Type: String
+    VpcCIDR:
+        Description: Enter the IP range (CIDR notation)
+        Type: String
+        Default: 10.0.0.0/16
+Resources:
+    MyVPC3093:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: !Ref VpcCIDR
+            EnableDnsHostnames: true
+            Tags:
+                - Key: Name
+                  Value: !Ref EnvironmentName
+    
+    MyInternetGateway3093:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+            Tags:
+                - Key: Name
+                  Value: !Ref EnvironmentName
+
+    InternetGatewayAttachment3093:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            InternetGatewayId: !Ref MyInternetGateway3093
+            VpcId: !Ref MyVPC3093
+
+Outputs:
+    MyVPC3093:
+        Description: A ref to the created VPC
+        Value: !Ref MyVPC3093
+        Export:
+            Name: !Sub ${EnvironmentName}-VPCID
+
+    VPCPublicRouteTable3093:
+        Description: Public routing
+        Value: !Ref PublicRouteTable
+        Export:
+            Name: !Sub ${EnvironmentName}-PUB-RT
+
