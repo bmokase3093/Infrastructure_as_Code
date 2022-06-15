@@ -20,8 +20,12 @@ Parameters:
     Type: String
     Default: 10.0.2.0/24
 
+  NetworkStackName:
+      Description: reference to the other stack
+      Type: String
+
 Resources:
-  MyVPC:
+  MyVPC3093:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: !Ref VpcCIDR
@@ -41,25 +45,25 @@ Resources:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref MyInternetGateway
-      VpcId: !Ref MyVPC
+      VpcId: !Ref MyVPC3093
 
   PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: !Ref PublicSubnetCIDR
-      VpcId: !Ref MyVPC
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      VpcId: !Ref MyVPC3093
+      AvailabilityZone: !Select [0, !GetAZs ""]
       MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub ${TagName} Public Subnet
-     
+
   PrivateSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: !Ref PrivateSubnetCIDR
-      VpcId: !Ref MyVPC
-      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      VpcId: !Ref MyVPC3093
+      AvailabilityZone: !Select [0, !GetAZs ""]
       MapPublicIpOnLaunch: false
       Tags:
         - Key: Name
@@ -83,7 +87,7 @@ Resources:
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref MyVPC3093
       Tags:
         - Key: Name
           Value: !Sub ${TagName} Public Routes
@@ -105,7 +109,7 @@ Resources:
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref MyVPC3093
       Tags:
         - Key: Name
           Value: !Sub ${TagName} Private Routes
@@ -122,3 +126,16 @@ Resources:
     Properties:
       RouteTableId: !Ref PrivateRouteTable
       SubnetId: !Ref PrivateSubnet
+
+Outputs:
+  PrivateSubnet:
+    Description: A reference to the private subnet
+    Value: !Ref PrivateSubnet
+    Export:
+      Name: "PrivateSubnet"
+      
+  MyVPC3093:
+    Description: A ref to the created VPC
+    Value: !Ref MyVPC3093
+    Export:
+      Name: "MyVPC3093"

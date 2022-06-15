@@ -1,0 +1,72 @@
+Description: >
+    Create and EC2 Instance and connect to it using AWS System Manager
+Parameters:
+    AMItoUse:
+      Description: AMI to use
+      Type: String
+
+    TagName:
+      Description: Tag Name to Prefix my resources
+      Type: String
+
+Resources:
+
+
+# IAM Role to allow EC2 Session Manager to acccess our server
+    MyIAMRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                - ec2.amazonaws.com
+              Action:
+                - 'sts:AssumeRole'
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+# The Instance Profile for my EC2 Server
+    MyInstanceProfile: 
+      Type: "AWS::IAM::InstanceProfile"
+      Properties: 
+        Path: "/"
+        Roles: 
+          - !Ref MyIAMRole
+
+# Security Group
+    WebServerSG:
+      Type: AWS::EC2::SecurityGroup
+      Properties:
+        #VpcId: !Ref MyVPC3093
+        VpcId: !ImportValue 
+          'Fn::Sub': 'MyVPC3093'
+        GroupDescription: that allows inbound port 80 access
+        SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 0.0.0.0/0
+  
+# The EC2 Web Server
+    MyEC2Instance: 
+        Type: AWS::EC2::Instance
+        Properties:
+          InstanceType: t3.micro
+          ImageId: !Ref AMItoUse
+          IamInstanceProfile: !Ref MyInstanceProfile
+          NetworkInterfaces:
+            - AssociatePublicIpAddress: true
+              DeviceIndex: 0
+              GroupSet:
+                - Ref: "WebServerSG"
+              SubnetId: !ImportValue 
+                'Fn::Sub': 'PrivateSubnet'
+

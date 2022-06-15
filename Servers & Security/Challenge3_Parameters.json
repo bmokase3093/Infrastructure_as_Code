@@ -1,0 +1,10 @@
+[
+    {
+        "ParameterKey": "TagName",
+        "ParameterValue": "Challenge_2"
+    },
+	{
+		"ParameterKey": "AMItoUse",
+		"ParameterValue": "ami-0ca285d4c2cda3300"
+	}
+]

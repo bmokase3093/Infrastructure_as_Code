@@ -14,5 +14,9 @@
 	{
 		"ParameterKey": "PrivateSubnetCIDR",
 		"ParameterValue": "10.0.2.0/24"
-	}
+	},
+    {
+        "ParameterKey": "NetworkStackName",
+        "ParameterValue": "NetworkStack"
+    }
 ]

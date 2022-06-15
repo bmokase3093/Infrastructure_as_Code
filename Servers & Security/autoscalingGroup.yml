@@ -1,0 +1,12 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creating Autoscaling group
+Parameters:
+Resources:
+  MyASGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchConfigurationName: !Ref WebAppLaunchConfig
+      MinSize: '3'
+      MaxSize: '5'
+      TargetGroupARNs: !Ref WebAppTargetGroup
+      VPCZoneIdentifier: !Ref Subnets   # Or I can use Fn:ImportValue

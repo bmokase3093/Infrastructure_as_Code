@@ -5,7 +5,7 @@ Description: >
     Create Elastic IPs and Nat Gateways
     Use Ouputs to assign values that can be used by other stacks
 Parameters:
-    EnvironmentName:
+    TagName:
         Description: An Enviromen name that will be prefix to Resources
         Type: String
 
@@ -42,14 +42,14 @@ Resources:
             EnableDnsHostnames: true
             Tags:
                 - Key: Name
-                  Value: !Ref EnvironmentName
+                  Value: !Ref TagName
 
     MyInternetGateway3093:
         Type: AWS::EC2::InternetGateway
         Properties:
             Tags:
                 - Key: Name
-                  Value: !Ref EnvironmentName
+                  Value: !Ref TagName
 
     InternetGatewayAttachment3093:
         Type: AWS::EC2::VPCGatewayAttachment
@@ -66,7 +66,7 @@ Resources:
             MapPublicIpOnLaunch: true
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
+                  Value: !Sub ${TagName} Public Subnet (AZ1)
     PublicSubnet2:
         Type: AWS::EC2::Subnet
         Properties:
@@ -76,7 +76,7 @@ Resources:
             MapPublicIpOnLaunch: true
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
+                  Value: !Sub ${TagName} Public Subnet (AZ2)
 
     PrivateSubnet1:
         Type: AWS::EC2::Subnet
@@ -87,7 +87,7 @@ Resources:
             MapPublicIpOnLaunch: false
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Private Subnet (AZ1)
+                  Value: !Sub ${TagName} Private Subnet (AZ1)
 
     PrivateSubnet2:
         Type: AWS::EC2::Subnet
@@ -98,7 +98,7 @@ Resources:
             MapPublicIpOnLaunch: false
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Private Subnet (AZ2)
+                  Value: !Sub ${TagName} Private Subnet (AZ2)
 
     NatGateway1EIP:
         Type: AWS::EC2::EIP
@@ -119,7 +119,7 @@ Resources:
             SubnetId: !Ref PublicSubnet1
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Nat Gateway 1
+                  Value: !Sub ${TagName} Nat Gateway 1
 
     NatGateway2:
         Type: AWS::EC2::NatGateway
@@ -128,7 +128,7 @@ Resources:
             SubnetId: !Ref PublicSubnet2
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Nat Gateway 2
+                  Value: !Sub ${TagName} Nat Gateway 2
 
     PublicRouteTable:
         Type: AWS::EC2::RouteTable
@@ -136,7 +136,7 @@ Resources:
             VpcId: !Ref MyVPC3093
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Public Routes
+                  Value: !Sub ${TagName} Public Routes
 
     DefaultPublicRoute:
         Type: AWS::EC2::Route
@@ -164,7 +164,7 @@ Resources:
             VpcId: !Ref MyVPC3093
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Private Routes (AZ1)
+                  Value: !Sub ${TagName} Private Routes (AZ1)
 
     DefaultPrivateRoute1:
         Type: AWS::EC2::Route
@@ -185,7 +185,7 @@ Resources:
             VpcId: !Ref MyVPC3093
             Tags:
                 - Key: Name
-                  Value: !Sub ${EnvironmentName} Private Routes (AZ2)
+                  Value: !Sub ${TagName} Private Routes (AZ2)
 
     DefaultPrivateRoute2:
         Type: AWS::EC2::Route
@@ -205,58 +205,58 @@ Outputs:
             Description: A reference to the created VPC
             Value: !Ref MyVPC3093
             Export:
-                Name: !Sub ${EnvironmentName}-VPCID
+                Name: !Sub ${TagName}-VPCID
 
         VPCPublicRouteTable:
             Description: Public Routing
             Value: !Ref PublicRouteTable
             Export:
-                Name: !Sub ${EnvironmentName}-PUB-RT
+                Name: !Sub ${TagName}-PUB-RT
 
         VPCPrivateRouteTable1:
             Description: Private Routing AZ1
             Value: !Ref PrivateRouteTable1
             Export:
-                Name: !Sub ${EnvironmentName}-PRI1-RT
+                Name: !Sub ${TagName}-PRI1-RT
 
         VPCPrivateRouteTable2:
             Description: Private Routing AZ2
             Value: !Ref PrivateRouteTable2
             Export:
-                Name: !Sub ${EnvironmentName}-PRI2-RT
+                Name: !Sub ${TagName}-PRI2-RT
 
         PublicSubnets:
             Description: A list of the public subnets
             Value: !Join [",", [!Ref PublicSubnet1, !Ref PublicSubnet2]]
             Export:
-                Name: !Sub ${EnvironmentName}-PUB-NETS
+                Name: !Sub ${TagName}-PUB-NETS
 
         PrivateSubnets:
             Description: A list of the private subnets
             Value: !Join [",", [!Ref PrivateSubnet1, !Ref PrivateSubnet2]]
             Export:
-                Name: !Sub ${EnvironmentName}-PRIV-NETS
+                Name: !Sub ${TagName}-PRIV-NETS
 
         PublicSubnet1:
             Description: A reference to the public subnet in the 1st Availability Zone
             Value: !Ref PublicSubnet1
             Export:
-                Name: !Sub ${EnvironmentName}-PUB1-SN
+                Name: !Sub ${TagName}-PUB1-SN
 
         PublicSubnet2:
             Description: A reference to the public subnet in the 2nd Availability Zone
             Value: !Ref PublicSubnet2
             Export:
-                Name: !Sub ${EnvironmentName}-PUB2-SN
+                Name: !Sub ${TagName}-PUB2-SN
 
         PrivateSubnet1:
             Description: A reference to the private subnet in the 1st Availability Zone
             Value: !Ref PrivateSubnet1
             Export:
-                Name: !Sub ${EnvironmentName}-PRI1-SN
+                Name: !Sub ${TagName}-PRI1-SN
 
         PrivateSubnet2:
             Description: A reference to the private subnet in the 2nd Availability Zone
             Value: !Ref PrivateSubnet2
             Export:
-                Name: !Sub ${EnvironmentName}-PRI2-SN
+                Name: !Sub ${TagName}-PRI2-SN

@@ -1,0 +1,91 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create Amazon RDS database instance
+Parameters:
+  TagName:
+        Description: An Enviromen name that will be prefix to Resources
+        Type: String
+
+  DBInstanceID:
+    Default: mydbInstance
+    Description: My RDS database instance
+    Type: String
+    MinLength: '1'
+    MaxLength: '63'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with letter and not end with hyphen
+
+  DBName:
+    Default: myrdsdb
+    Description: My database
+    Type: String
+    MinLength: '1'
+    MaxLength: '64'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with letter and contain alphanumeric
+
+  DBInstanceClass:
+    Default: db.t2.small
+    Description: Databas instance class
+    Type: String
+    ConstraintDescription: Must select a valid db class
+
+  DBAllocatedStorage:
+    Default: 20
+    Description: The size of the database in GBs
+    Type: Number
+    MinValue: '20'
+    MaxValue: '65536'
+    ConstraintDescription: Must be between 20 and 65536 GiB
+
+  DBUsername:
+    NoEcho: 'true'
+    Description: Username for the database access
+    Type: String
+    MinLength: '1'
+    MaxLength: '16'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ConstraintDescription: Must begin with letter and contain alphanumeric
+
+  DBPassword:
+    NoEcho: 'true'
+    Description: Password for MySQL database access
+    Type: String
+    MinLength: '8'
+    MaxLength: '41'
+    AllowedPattern: '[a-zA-Z0-9]*'
+    ConstraintDescription: must contain only alphanumeric characters
+
+Resources:
+  myDBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetDescription: Subnet group to deploy my database into
+      SubnetIds: !ImportValue
+        - 'Fn::Sub': 'Challenge-PRI1-SN'
+        - 'Fn::Sub': 'Challenge-PRI2-SN'
+      Tags:
+        - Key: Name
+          Value: !Sub ${TagName}-DBSubnetGroup
+
+  MyRDSDB3093:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: !Ref DBInstanceClass
+      DBInstanceIdentifier: !Ref DBInstanceID
+      VPCSecurityGroups: [sg-00bea0b0aae43be41]
+      DBSubnetGroupName: !Ref myDBSubnetGroup
+      MultiAZ: false
+      Port: 3306
+      PubliclyAccessible: false
+      StorageType: "gp2"
+      DBName: !Ref DBName
+      AllocatedStorage: !Ref DBAllocatedStorage
+      Engine: mysql
+      # EngineVersion: : 8.0.28
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DeletionPolicy: "Retain"
+      Tags:
+        - Key: Name
+          Value: !Sub ${TagName}-MyRDS
+

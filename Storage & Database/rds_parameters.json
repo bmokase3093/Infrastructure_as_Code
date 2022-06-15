@@ -1,0 +1,31 @@
+[
+    {
+        "ParameterKey": "TagName",
+        "ParameterValue": "Challange"
+    },
+    {
+        "ParameterKey": "DBInstanceID",
+        "ParameterValue": "MyRDSInstance3093"
+    },
+    {
+        "ParameterKey": "DBName",
+        "ParameterValue": "MyRDSDB3093"
+    },
+    {
+        "ParameterKey": "DBInstanceClass",
+        "ParameterValue": "db.t2.small"
+    }
+    ,
+    {
+        "ParameterKey": "DBAllocatedStorage",
+        "ParameterValue": "20"
+    },
+    {
+        "ParameterKey": "DBUsername",
+        "ParameterValue": "admin3093"
+    },
+    {
+        "ParameterKey": "DBPassword",
+        "ParameterValue": "welldone21B"
+    }
+]
